@@ -1,0 +1,14 @@
+# Binaries
+bin/
+/engine-stem-cli
+
+# Temp & build artifacts
+.tmp/
+.venv/
+.codegraph
+.codegraph/
+*.out
+*.prof
+
+# OS / Editor files
+.DS_Store
