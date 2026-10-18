@@ -19,7 +19,7 @@ This audit compares `engine-stem-cli` with the CLI best-practices and Go enginee
 | Medium | Help does not meet the tree and agent contracts | `internal/cli/root.go` uses Cobra's default help. The required `cobra-help-tree/v2` integration, argument catalog, width trimming, and compact agent help are absent. |
 | Medium | Home paths are not folded | `internal/cli/output.go` prints message and metadata paths unchanged. Commands and verbose workflows also print paths directly. No shared home-path formatter exists. |
 | Medium | Output errors are discarded | Output helpers ignore formatted-write errors; table rendering discards `Append` and `Render` errors. Root version output also discards write failures. |
-| Medium | Coverage misses the project minimum | Local `just ci` reports CLI 80.5%, inference 27.1%, MP4 87.3%, and stems 88.6%. The 90% policy is not enforced by CI. |
+| Medium | Coverage misses the project minimum | Local `just ci` reports CLI 81.8%, inference 27.1%, MP4 87.3%, and stems 88.6%. The 90% policy is not enforced by CI. |
 | Low | Existing formatting drift | `gofmt -l cmd internal` reports `internal/inference/onnx.go`. |
 
 ## Conforming areas

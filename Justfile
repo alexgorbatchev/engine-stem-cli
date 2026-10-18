@@ -4,7 +4,7 @@ set shell := ["bash", "-uc"]
 binary_name := "engine-stem-cli"
 output_dir := "./bin"
 binary := output_dir + "/" + binary_name
-version := env("VERSION", "dev")
+export VERSION := env("VERSION", "dev")
 
 # Default target: build the binary
 default: build
@@ -20,17 +20,17 @@ run-ai *args:
 # Build binary into ./bin
 build:
     @mkdir -p {{output_dir}}
-    go build -trimpath -ldflags "-s -w -X github.com/alexgorbatchev/engine-stem-cli/internal/cli.Version={{version}}" -o {{binary}} ./cmd/{{binary_name}}
+    go build -trimpath -ldflags "-s -w -X github.com/alexgorbatchev/engine-stem-cli/internal/cli.Version=$VERSION" -o {{binary}} ./cmd/{{binary_name}}
 
 # Build and verify a native, versioned release archive (VERSION=vX.Y.Z)
 release-package: build
     #!/usr/bin/env bash
     set -euo pipefail
-    [[ '{{version}}' =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-    test "$({{binary}} --version)" = '{{version}}'
+    [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+    test "$({{binary}} --version)" = "$VERSION"
     target="$(go env GOOS)_$(go env GOARCH)"
     mkdir -p {{output_dir}}/releases
-    tar -czf "{{output_dir}}/releases/{{binary_name}}_{{version}}_${target}.tar.gz" -C {{output_dir}} {{binary_name}} -C "{{justfile_directory()}}" LICENSE README.md
+    tar -czf "{{output_dir}}/releases/{{binary_name}}_${VERSION}_${target}.tar.gz" -C {{output_dir}} {{binary_name}} -C "{{justfile_directory()}}" LICENSE README.md
 
 # Verify module hygiene, static analysis, and race-enabled tests
 ci:
