@@ -1,3 +1,6 @@
+> [!WARNING]
+> This public repository does not include Engine DJ encryption keys, proprietary Engine DJ source code, or Engine DJ application binaries. Encryption keys are extracted at runtime from your own local Engine DJ installation. Test fixtures use synthetic key values.
+
 `engine-stem-cli` helps DJs inspect Engine DJ stem containers, decrypt them to multichannel M4A, and extract individual stereo parts.
 
 # What It Does
