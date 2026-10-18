@@ -16,6 +16,9 @@ func TestRenamedCommand(t *testing.T) {
 		RootCmd.SetOut(nil)
 		RootCmd.SetErr(nil)
 		flagVersion = false
+		if err := RootCmd.Flags().Set("help", "false"); err != nil {
+			t.Error(err)
+		}
 	})
 	RootCmd.SetArgs([]string{"--help"})
 	if err := RootCmd.Execute(); err != nil {
