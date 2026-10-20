@@ -11,26 +11,26 @@ default: build
 
 # Run CLI in human mode (default)
 run *args:
-    go run ./cmd/{{binary_name}} {{args}}
+    go run ./cmd/{{ binary_name }} {{ args }}
 
 # Run CLI in agent-facing token-conservative mode
 run-ai *args:
-    AGENT=1 go run ./cmd/{{binary_name}} {{args}}
+    AGENT=1 go run ./cmd/{{ binary_name }} {{ args }}
 
 # Build binary into ./bin
 build:
-    @mkdir -p {{output_dir}}
-    go build -trimpath -ldflags "-s -w -X github.com/alexgorbatchev/engine-stem-cli/internal/cli.Version=$VERSION" -o {{binary}} ./cmd/{{binary_name}}
+    @mkdir -p {{ output_dir }}
+    go build -trimpath -ldflags "-s -w -X github.com/alexgorbatchev/engine-stem-cli/internal/cli.Version=$VERSION" -o {{ binary }} ./cmd/{{ binary_name }}
 
 # Build and verify a native, versioned release archive (VERSION=vX.Y.Z)
 release-package: build
     #!/usr/bin/env bash
     set -euo pipefail
     [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-    test "$({{binary}} --version)" = "$VERSION"
+    test "$({{ binary }} --version)" = "$VERSION"
     target="$(go env GOOS)_$(go env GOARCH)"
-    mkdir -p {{output_dir}}/releases
-    tar -czf "{{output_dir}}/releases/{{binary_name}}_${VERSION}_${target}.tar.gz" -C {{output_dir}} {{binary_name}} -C "{{justfile_directory()}}" LICENSE README.md
+    mkdir -p {{ output_dir }}/releases
+    tar -czf "{{ output_dir }}/releases/{{ binary_name }}_${VERSION}_${target}.tar.gz" -C {{ output_dir }} {{ binary_name }} -C "{{ justfile_directory() }}" LICENSE README.md
 
 # Verify module hygiene, static analysis, and race-enabled tests
 ci:
@@ -65,8 +65,12 @@ lint:
 
 # Install binary to GOPATH/bin
 install:
-    go install ./cmd/{{binary_name}}
+    go install ./cmd/{{ binary_name }}
 
 # Clean build artifacts
 clean:
-    rm -rf {{output_dir}}
+    rm -rf {{ output_dir }}
+
+# Download project dependencies for local development
+setup:
+    go mod download
