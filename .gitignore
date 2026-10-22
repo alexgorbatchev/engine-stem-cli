@@ -4,6 +4,7 @@ bin/
 
 # Temp & build artifacts
 .tmp/
+/.workspaces/
 .venv/
 .codegraph
 .codegraph/

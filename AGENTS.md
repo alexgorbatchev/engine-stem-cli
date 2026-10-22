@@ -21,7 +21,8 @@ Always use the agent harness editing tools (`write`, `edit`) to create or modify
 2. **Tooling & Build System**:
    - Always use `Justfile` tasks for building, testing, and linting:
      - `just build`: Compiles binary into `./bin/engine-stem-cli`.
-     - `just test`: Runs all unit tests (`go test -v ./...`).
+     - `just setup`: Downloads module dependencies and installs `.githooks` as `core.hooksPath`.
+     - `just test`: Runs all unit tests (`go test -v ./...`) and the Git hook tests (`bash scripts/test-git-hooks.sh .githooks`).
      - `just vet`: Runs Go static analysis (`go vet ./...`).
      - `just bench`: Runs performance benchmarks (`go test -bench=. ./...`).
      - `just ci`: Checks module hygiene, runs vet, and runs race-enabled tests with coverage.
@@ -44,6 +45,10 @@ Always use the agent harness editing tools (`write`, `edit`) to create or modify
 
 - **`main`**: Clean, production-ready Go CLI application codebase, `Justfile`, unit tests, and evergreen user documentation.
 - **`research`**: Exploratory research scripts (Python, TypeScript), reverse-engineering disassembly notes, and baseline measurements.
+- Make every change in a linked worktree under `.workspaces/<name>` on a new branch created from the local target branch, `main` or `research` (`git worktree add -b <branch> .workspaces/<name> main`). Never edit the main checkout directly; other sessions share it.
+- Validate and commit in the worktree, then fast-forward the target branch from the main checkout (`git merge --ff-only <branch>`; rebase the branch onto the target first when it has moved). Afterwards remove the worktree and delete the branch (`git worktree remove .workspaces/<name>`, `git branch -d <branch>`). Finish by confirming the target is level with its remote branch, such as `origin/main` (`git fetch`, then `git status -sb` shows no ahead or behind count); the hook only attempts the push. Yield the turn to the user only after the change is merged into its target, synced with the remote, and its worktree removed.
+- `just setup` installs `.githooks` as `core.hooksPath`. Its post-commit and post-merge hooks push a branch to its same-named upstream after every commit or merge, so both `main` and `research` reach GitHub immediately; branches without one, including worktree branches, stay local. Hooks act only on this repository, wherever it is checked out; never invoke enclosing repositories or their recipes. `bash scripts/test-git-hooks.sh .githooks` tests them.
+- A merge into `main` or `research` publishes it on GitHub, though not as a release. Never amend, rebase, or force-push commits already on the remote; fix mistakes with a follow-up change. Inspect staged changes for private hostnames before committing. When a push is rejected because the remote branch moved, run `git pull --rebase` on the target branch, then `git push`.
 
 ---
 
