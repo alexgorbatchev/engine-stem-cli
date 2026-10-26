@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
 jobs:
   verify:
     name: Verify (${{ matrix.runner }})
@@ -16,7 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         # ONNX uses CGO; compile and test on each native platform.
-        runner: [ubuntu-24.04, ubuntu-24.04-arm, macos-15-intel, macos-15]
+        # Native archives require every platform on tags; routine validation uses one runner.
+        runner: ${{ fromJSON(startsWith(github.ref, 'refs/tags/v') && '["ubuntu-latest","ubuntu-26.04-arm","macos-26-intel","macos-latest"]' || '["ubuntu-latest"]') }}
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v7
@@ -45,7 +50,7 @@ jobs:
   release:
     needs: verify
     if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
