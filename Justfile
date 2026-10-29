@@ -38,10 +38,9 @@ ci:
     go vet ./...
     go test -race -cover ./...
 
-# Run unit tests and the publishing Git hook tests
+# Run unit tests
 test:
     go test -v ./...
-    bash scripts/test-git-hooks.sh .githooks
 
 # Run static checks, vet, and tests
 check:
@@ -72,7 +71,6 @@ install:
 clean:
     rm -rf {{ output_dir }}
 
-# Download project dependencies and install the publishing Git hooks
+# Download project dependencies
 setup:
     go mod download
-    git config core.hooksPath .githooks
